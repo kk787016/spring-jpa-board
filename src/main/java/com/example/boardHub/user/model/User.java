@@ -30,7 +30,7 @@ public class User {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String nickname;
 
     @Column(updatable = false)
@@ -42,13 +42,13 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<>();
 
-    public static User createUser(String userId, String password, String username, String nickname, LocalDateTime createdDate){
+    public static User createUser(String userId, String password, String username, String nickname){
         User user = new User();
         user.userId = userId;
         user.password = password;
         user.username = username;
         user.nickname = nickname;
-        user.createdDate = createdDate;
+        user.createdDate = LocalDateTime.now();
         return user;
     }
 }

@@ -1,7 +1,7 @@
 package com.example.boardHub.user.service;
 
 import com.example.boardHub.user.model.User;
-import com.example.boardHub.user.repository.SpringUserRepository;
+import com.example.boardHub.user.repository.UserRepository;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final SpringUserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public CustomUserDetailsService(SpringUserRepository userRepository) {
+    public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

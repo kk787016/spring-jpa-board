@@ -1,5 +1,7 @@
 jwt:
   secret: my-secret-key-for-jwt-signing
+  validity-in-ms: 900000
+  refresh-validity-in-ms: 604800000
 
 spring:
   application:

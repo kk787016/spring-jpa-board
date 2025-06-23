@@ -17,24 +17,11 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
-
-
 public class UserController{
 
     private final UserService userService;
-
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-
-    @GetMapping("/register")
-    public String showRegisterPage() {
-        return "user/register"; // templates/user/register.html을 렌더링
-    }
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "user/login"; // templates/user/register.html을 렌더링
     }
 
     @PostMapping("/register")
