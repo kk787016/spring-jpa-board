@@ -1,0 +1,19 @@
+### 회원가입 테스트 (POST)
+POST http://localhost:8080/user/register
+Content-Type: application/json
+
+{
+  "userId": "junwook123",
+  "password": "1234pass!",
+  "username": "준욱",
+  "nickname": "주니"
+}
+
+### 로그인 테스트 (POST)
+POST http://localhost:8080/user/login
+Content-Type: application/json
+
+{
+  "userId": "junwook123",
+  "password": "1234pass!"
+}
