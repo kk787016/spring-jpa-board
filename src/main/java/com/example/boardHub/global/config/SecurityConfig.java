@@ -30,8 +30,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/","/user/**","/board/**","/h2-console/**").permitAll()
-                        .anyRequest().authenticated()
+                                .anyRequest().permitAll() // 모든 요청을 인증 없이 허용
+//                        .requestMatchers("/","/user/**","/board/**","/boards/**","/h2-console/**").permitAll()
+//                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .build();
