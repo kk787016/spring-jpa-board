@@ -38,3 +38,13 @@ Thumbs.db
 *.jar
 *.war
 *.ear
+# Gradle
+.gradle/
+build/
+
+# IDE
+.idea/
+*.iml
+
+# 기타
+out/

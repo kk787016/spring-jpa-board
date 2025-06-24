@@ -40,12 +40,11 @@ public class JwtTokenProvider {
     }
 
     public String createAccessToken(String userId) {
-        Claims claims = Jwts.claims().setSubject(userId);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMs);
 
         return Jwts.builder()
-                .setClaims(claims)
+                .setSubject(userId)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key, SignatureAlgorithm.HS256)

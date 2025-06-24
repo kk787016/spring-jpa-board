@@ -1,6 +1,7 @@
 package com.example.boardHub.user.controller;
 
 import com.example.boardHub.global.config.jwt.JwtTokenProvider;
+import com.example.boardHub.global.context.UserContext;
 import com.example.boardHub.user.dto.LoginRequestDto;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,24 +38,23 @@ public class AuthController {
                     )
             );
 
-            String accessToken = jwtTokenProvider.createAccessToken(authentication.getName());
-            String refreshToken = jwtTokenProvider.createRefreshToken(authentication.getName());
+            String userId = authentication.getName();
+            String accessToken = jwtTokenProvider.createAccessToken(userId);
+            String refreshToken = jwtTokenProvider.createRefreshToken(userId);
+
 
             ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                     .httpOnly(true)
-                    .secure(false) // 로컬에서 테스트 시 false 가능
+                    .secure(false) // HTTPS에서 true로 변경
                     .path("/")
-                    .maxAge(7 * 24 * 60 * 60) // 7일
-                    .sameSite("Strict") // 또는 "Lax" / "None"
+                    .maxAge(7 * 24 * 60 * 60)
+                    .sameSite("Strict")
                     .build();
+
             response.addHeader("Set-Cookie", cookie.toString());
 
-
-
-
-            return ResponseEntity.ok().body(Map.of(
-                    "accessToken", accessToken
-                    , "refreshToken", refreshToken));
+            // ✅ Access Token은 JSON 응답으로 전달 (localStorage에 저장하게)
+            return ResponseEntity.ok().body(Map.of("accessToken", accessToken));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "아이디 또는 비밀번호가 잘못되었습니다."));
         }
