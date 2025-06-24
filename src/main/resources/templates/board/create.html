@@ -40,7 +40,46 @@
     }
 
     const accessToken = localStorage.getItem('accessToken');
-    if (
+    if (!accessToken) {
+      alert('로그인이 필요합니다.');
+      window.location.href = '/user/login'; // 로그인 페이지로 이동
+      return;
+    }
+
+    try {
+      const response = await fetch('/board/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + accessToken, // ✅ Authorization 헤더 포함
+        },
+        body: JSON.stringify({ title, content }),
+      });
+
+      if (response.ok) {
+        alert('게시글이 작성되었습니다.');
+        window.location.href = '/'; // 글 목록 등으로 이동
+      } else if (response.status === 401) {
+        alert('인증이 필요합니다. 다시 로그인 해주세요.');
+        localStorage.removeItem('accessToken'); // accessToken 무효화
+        window.location.href = '/user/login';
+      } else {
+        // 응답이 JSON이 아닐 수 있으니 예외 처리
+        let errorMessage = '알 수 없는 오류가 발생했습니다.';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          const text = await response.text();
+          if (text) errorMessage = text;
+        }
+        alert('오류: ' + errorMessage);
+      }
+    } catch (error) {
+      console.error('게시글 작성 오류:', error);
+      alert('서버와 통신 중 오류가 발생했습니다.');
+    }
+  });
 </script>
 </body>
 </html>

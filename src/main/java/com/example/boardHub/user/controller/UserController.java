@@ -5,6 +5,7 @@ import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,13 +17,11 @@ import java.io.IOException;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController{
 
     private final UserService userService;
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequestDto userDto) {

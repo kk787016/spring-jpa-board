@@ -1,7 +1,7 @@
 package com.example.boardHub.user.controller;
 
 import com.example.boardHub.global.config.jwt.JwtTokenProvider;
-import com.example.boardHub.global.context.UserContext;
+//import com.example.boardHub.global.context.UserContext;
 import com.example.boardHub.user.dto.LoginRequestDto;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

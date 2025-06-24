@@ -48,3 +48,7 @@ build/
 
 # 기타
 out/
+/.gradle
+/.gradle/buildOutputCleanup
+/build
+*.bin
