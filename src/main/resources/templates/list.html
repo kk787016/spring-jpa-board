@@ -30,10 +30,10 @@
     <tr th:each="board : ${boards}">
       <td th:text="${board.id}"></td>
       <td th:text="${board.title}"></td>
-      <td th:text="${board.user.nickname}"></td> <!-- 사용자 닉네임 예시 -->
-      <td th:text="${#dates.format(board.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
+      <td th:text="${board.user.userId}"></td>
+      <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
       <td>
-        <a th:href="@{/boards/{id}(id=${board.id})}" class="btn btn-info">상세보기</a>
+        <a th:href="@{/board/{id}(id=${board.id})}" class="btn btn-info">상세보기</a>
       </td>
     </tr>
     </tbody>
@@ -91,6 +91,7 @@
     localStorage.removeItem("accessToken");
     alert("로그아웃 되었습니다.");
     window.location.href = "/user/login";
+
   }
 
   document.getElementById("writeBtn").addEventListener("click", () => {
