@@ -25,6 +25,8 @@ public class BoardController {
         return "board/detail";
     }
 
+
+
 //    @PostMapping("/new")
 //    public ResponseEntity<?> createBoard() {
 //        String userId = UserContext.getUserId();
