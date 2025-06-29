@@ -7,6 +7,14 @@
 </head>
 <body>
 <div class="container">
+  <!-- errorMessage와 message를 표시하는 부분 추가 -->
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <p th:text="${errorMessage}"></p>
+  </div>
+  <div th:if="${message}" class="alert alert-success" role="alert">
+    <p th:text="${message}"></p>
+  </div>
+
   <h1 class="my-4">게시글 리스트</h1>
 
   <!-- 로그인한 사용자 정보 표시 -->
@@ -90,7 +98,8 @@
   function logout() {
     localStorage.removeItem("accessToken");
     alert("로그아웃 되었습니다.");
-    window.location.href = "/user/login";
+    //window.location.href = "/user/login";
+    window.location.replace("user/login")
 
   }
 

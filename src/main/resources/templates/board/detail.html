@@ -35,7 +35,7 @@
 
   <div class="mt-3" id="actionButtons">
     <a id="editBtn" th:href="@{/board/edit/{id}(id=${board.id})}" class="btn btn-warning" style="display: none;">수정</a>
-    <button id="deleteBtn" class="btn btn-danger" onclick="deleteBoard([[${board.id}]])" style="display: none;">삭제</button>
+    <button id="deleteBtn" class="btn btn-danger"th:onclick="|deleteBoard(${board.id})|" style="display: none;">삭제</button>
     <a href="/" class="btn btn-secondary">목록으로 돌아가기</a>
   </div>
 
@@ -102,7 +102,6 @@
     }
   });
 
-  // ... (deleteBoard 함수는 그대로 유지) ...
 
   function deleteBoard(id) {
     if (confirm("정말 이 게시글을 삭제하시겠습니까?")) {

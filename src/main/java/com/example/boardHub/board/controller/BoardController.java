@@ -2,12 +2,15 @@ package com.example.boardHub.board.controller;
 
 
 //import com.example.boardHub.global.context.UserContext;
+
 import com.example.boardHub.board.dto.BoardRequestDto;
 import com.example.boardHub.board.model.Board;
 import com.example.boardHub.board.service.BoardService;
+import com.example.boardHub.global.exception.BoardNotFoundException;
 import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.repository.UserRepository;
 import com.example.boardHub.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.naming.NoPermissionException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,9 +42,10 @@ public class BoardController {
 
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
-        Board board = boardService.getBoardDetail(id);
 
+        Board board = boardService.getBoardDetail(id);
         model.addAttribute("board", board);
+
         boolean hasPermission = false; // 기본값은 권한 없음
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -58,25 +64,47 @@ public class BoardController {
 
         return "board/detail";
     }
+
     @PostMapping("/new")
     public ResponseEntity<?> create(@RequestBody BoardRequestDto boardRequestDto, Authentication authentication) {
+
+        if (authentication == null || authentication.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 정보가 없습니다.");
+        }
+
+        String userId = authentication.getName();
+
         try {
-            String userId = authentication.getName();
             User user = userRepository.findByUserId(userId)
                     .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다. userId: " + userId));
-            boardService.registerBoard(boardRequestDto.getTitle(),boardRequestDto.getContent(),user);
+
+            boardService.registerBoard(boardRequestDto.getTitle(), boardRequestDto.getContent(), user);
+
             return ResponseEntity.ok().body(Map.of("message", "게시판 성공"));
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
-//    @PostMapping("/new")
-//    public ResponseEntity<?> createBoard() {
-//        String userId = UserContext.getUserId();
-//        if (userId == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-//        }
-//        //boardService.createPost(userId, dto);
-//        return ResponseEntity.ok().build();
-//    }
+
+    @PostMapping("/delete")   // 게시판 id, user id도?
+    public ResponseEntity<?> deleteBoard(@RequestParam("id") Long boardId, Authentication authentication) {
+
+        if (authentication == null || authentication.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 정보가 없습니다.");
+        }
+
+        String userId = authentication.getName();
+
+        try {
+            boardService.deleteBoard(boardId, userId); // 서비스 계층을 통해 게시글 삭제
+            return ResponseEntity.ok().body(Map.of("message", "게시판 삭제 성공"));
+
+        } catch (BoardNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"message\": \"" + e.getMessage() + "\"}");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + e.getMessage() + "\"}");
+        }
+
+    }
+
 }

@@ -19,11 +19,9 @@ public class HomeController {
 
     @GetMapping("/")
     public String homeView(Model model) {
+
         List<Board> boards = boardService.getAllBoards();
 
-        for (Board board : boards) {
-            System.out.println(" =@@@@@@@@@@ " +board.getCreatedAt());
-        }
         model.addAttribute("boards", boards);
         return "list";
     }
