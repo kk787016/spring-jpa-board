@@ -106,7 +106,7 @@
   function deleteBoard(id) {
     if (confirm("정말 이 게시글을 삭제하시겠습니까?")) {
       const form = document.createElement('form');
-      form.setAttribute('method', 'post');
+      form.setAttribute('method', 'patch');
       form.setAttribute('action', '/board/delete');
 
       const hiddenField = document.createElement('input');

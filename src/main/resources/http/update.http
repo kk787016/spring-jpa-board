@@ -1,0 +1,60 @@
+
+### 게시글 업데이트
+PATCH http://localhost:8080/board/update/13
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI3MTI4NCwiZXhwIjoxNzUxMjcyMTg0fQ.Nb5uFew0YyZBaBiHcVXnUK9qb1_-W8r2vVLmO0zheM4
+
+{
+  "title": "새로123 ",
+  "content": "111111111."
+}
+
+### 게시글 업데이트 - 제목만
+PATCH http://localhost:8080/board/update/13
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI3Mzc3NSwiZXhwIjoxNzUxMjc0Njc1fQ.zoSJrI_cEmAfADWPwL0xp0d8op-7lqDNEGOGM2zNKtw
+
+{
+"title": "aaaaaaaaaaaa"
+}
+
+
+### 게시글 업데이트 - 내용만
+PATCH http://localhost:8080/board/update/13
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI3Mjg1MiwiZXhwIjoxNzUxMjczNzUyfQ.A_qTPLY5tcOrvDg6bpD_6NoOHkJOMxnQukJVKgbRwL0
+
+{
+  "content": "1213123123123"
+}
+
+
+
+
+### 게시글 업데이트 (PATCH) - 잘못된 토큰
+
+PATCH http://localhost:8080/board/update/13
+Content-Type:  application/json
+Authorization: Bearer teyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTIwMjk0OSwiZXhwIjoxNzUxMjAzODQ5fQ.qB7ziJ4JyiUaRoolGns6EOP_Z1UI7HIPBtW0CPkCk-8
+
+{
+  "content": "22222222222222222222222"
+}
+### 게시글 업데이트 (PATCH) - 없는 게시글
+
+PATCH http://localhost:8080/board/update/1311
+Content-Type:  application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI3MDY0MCwiZXhwIjoxNzUxMjcxNTQwfQ.F39A4KhWAYSxUhtYjBA3zPAlFJpIQNutU6ymtglPxSE
+
+{
+  "content": "22222222222222222222222"
+}
+### 게시글 업데이트 (PATCH) - 권한 없음
+
+PATCH http://localhost:8080/board/update/1
+Content-Type:  application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI3MDY0MCwiZXhwIjoxNzUxMjcxNTQwfQ.F39A4KhWAYSxUhtYjBA3zPAlFJpIQNutU6ymtglPxSE
+
+{
+  "content": "22222222222222222222222"
+}

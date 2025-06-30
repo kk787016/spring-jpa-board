@@ -1,0 +1,22 @@
+
+### 게시글 생성 (POST)
+
+POST http://localhost:8080/board/new
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI2NzI1MywiZXhwIjoxNzUxMjY4MTUzfQ.z86F7UdqaAFBSP4ciMUHqimK99Kn6_JSVNuPrrZnGDs
+
+{
+  "title": "aaaaaafasdfsadfasdf판",
+  "content": "aaaasdfasdfasdfasdfasd 게시판입니다."
+}
+
+### 게시글 생성 (POST) - 잘못된 토큰
+
+POST http://localhost:8080/board/new
+Content-Type: application/json
+Authorization: Bearer tteyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTE3NjE1NSwiZXhwIjoxNzUxMTc3MDU1fQ.kBSFtDaIAxpQlnbiL0o-EpQzj0tOmlpZSed69ZbenD4
+
+{
+  "title": "첫 번째 게시판",
+  "content": "이것은 첫 번째 테스트 게시판입니다."
+}

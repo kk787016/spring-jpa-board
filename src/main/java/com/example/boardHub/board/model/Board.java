@@ -49,6 +49,7 @@ public class Board {
     private LocalDateTime updatedAt;
 
     private boolean deleted = false; // Soft delete 용도
+
     private Long viewCount;
 
     @Builder
@@ -61,13 +62,14 @@ public class Board {
         this.deleted = false;
     }
 
-    public void update(String title, String content) {
-        if (title != null && !title.trim().isEmpty()) {
-            this.title = title;
-        }
-        if (content != null && !content.trim().isEmpty()) {
-            this.content = content;
-        }
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+    public void updateContent(String content) {
+        this.content = content;
+    }
+    public void updateTime(LocalDateTime time) {
+        this.updatedAt = time;
     }
 
 
