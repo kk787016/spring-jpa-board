@@ -1,0 +1,23 @@
+
+### 게시판 답글 생성 (POST)
+
+POST http://localhost:8080/board/14/new
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI4OTQwNSwiZXhwIjoxNzUxMjkwMzA1fQ.ho7ryOSWJ2IsSkD0T4WKfzwxlWbsaIfYImxCUenOm1Y
+
+{
+  "title": "답글 답글 답글 답글",
+  "content": "1111답글 답글 답글 답글답글 답글 답글 답글답글 답글 답글 답글11111."
+}
+
+
+### 게시판 답글 생성 (POST) - 부모 없는
+
+POST http://localhost:8080/board/144/new
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI5MTI0OCwiZXhwIjoxNzUxMjkyMTQ4fQ.ZjDcx6KEpbfqbUjyzj5pfCEIqF4hypL3pUzYRtr7tTM
+
+{
+  "title": "새로123 ",
+  "content": "111111111."
+}

@@ -6,14 +6,12 @@ import com.example.boardHub.board.repository.BoardRepository;
 import com.example.boardHub.global.exception.BoardNotFoundException;
 import com.example.boardHub.user.model.User;
 
-import com.example.boardHub.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,37 +24,18 @@ public class BoardService {
         return boardRepository.findByDeletedFalseOrderByCreatedAtDescWithUser();
     }
 
-
     @Transactional
-    public Board registerBoard(String title, String content, User user) {
+    public void registerBoard(BoardRequestDto boardRequestDto, User user) {
 
         Board newBoard = Board.builder()
-                .title(title)
-                .content(content)
+                .title(boardRequestDto.getTitle())
+                .content(boardRequestDto.getContent())
                 .user(user)
                 .parent(null)
                 .build();
 
-        return boardRepository.save(newBoard);
+        boardRepository.save(newBoard);
     }
-
-    @Transactional
-    public Board registerReplyBoard(String title, String content, User user, Long boardId) {
-        Board parentBoard = boardRepository.findById(boardId).orElseThrow(()->
-                new IllegalArgumentException("부모 게시글을 찾을 수 없습니다.")
-        );
-
-        Board replyBoard = Board.builder()
-                .title(title)
-                .content(content)
-                .user(user)
-                .parent(parentBoard)
-                .build();
-        parentBoard.addChildBoard(replyBoard);
-
-        return boardRepository.save(replyBoard);
-    }
-
 
     // 게시글 상세 조회 및 조회수 증가
     @Transactional
@@ -75,8 +54,17 @@ public class BoardService {
     public void deleteBoard(Long boardId, User user) {
         Board board = findBoardAndCheckOwnership(boardId, user);
         //boardRepository.delete(board); 전체 삭제 하면 안되고, delete = false
-        board.softDelete();
 
+        if (board.getParent() == null) {
+            if (board.getChildren().isEmpty())
+            {
+                boardRepository.delete(board);
+            } else {
+                board.softDelete();
+            }
+        } else {
+            boardRepository.delete(board);
+        }
     }
 
     @Transactional
@@ -90,6 +78,24 @@ public class BoardService {
             board.updateContent(requestDto.getContent());
         }
         board.updateTime(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void registerReplyBoard(Long parentBoardId, BoardRequestDto boardRequestDto, User user) {
+        Board parentBoard = boardRepository.findById(parentBoardId).orElseThrow(()->
+                new BoardNotFoundException("부모 게시글을 찾을 수 없습니다.")
+        );
+
+        Board replyBoard = Board.builder()
+                .title(boardRequestDto.getTitle())
+                .content(boardRequestDto.getContent())
+                .user(user)
+                .parent(parentBoard)
+                .build();
+
+        parentBoard.addChildBoard(replyBoard);
+
+        boardRepository.save(replyBoard);
     }
 
     private Board findBoardAndCheckOwnership(Long boardId, User user) {

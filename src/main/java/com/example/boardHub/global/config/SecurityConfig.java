@@ -40,8 +40,9 @@ public class SecurityConfig {
 //                        .requestMatchers("/","/user/**","/board/**","/boards/**","/h2-console/**").permitAll()
 //                        .anyRequest().authenticated()
 
-                                .requestMatchers(HttpMethod.PATCH, "/board/update/**").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/board/delete/**").authenticated()
+                                .requestMatchers("/board/update/**").authenticated()
+                                .requestMatchers("/board/delete/**").authenticated()
+                                //.requestMatchers("/board/**/new").authenticated()
                                 .anyRequest().permitAll()
 
                 )

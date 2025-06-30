@@ -14,7 +14,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI2NzI1M
 
 POST http://localhost:8080/board/new
 Content-Type: application/json
-Authorization: Bearer tteyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTE3NjE1NSwiZXhwIjoxNzUxMTc3MDU1fQ.kBSFtDaIAxpQlnbiL0o-EpQzj0tOmlpZSed69ZbenD4
+Authorization: Bearer tteyJeyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI5MDQ2MSwiZXhwIjoxNzUxMjkxMzYxfQ.nmV_jRXldgz4j1Hv0Z7-Ekxy18A-3B90c76zyRg68fA
 
 {
   "title": "첫 번째 게시판",

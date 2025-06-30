@@ -41,7 +41,8 @@
       <td th:text="${board.user.userId}"></td>
       <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
       <td>
-        <a th:href="@{/board/{id}(id=${board.id})}" class="btn btn-info">상세보기</a>
+        <a th:href="@{/board/{id}(id=${board.id})}"
+           th:data-board-id="${board.id}" class="btn btn-info detail-link">상세보기</a>
       </td>
     </tr>
     </tbody>
@@ -136,6 +137,7 @@
               });
     }
   });
+
 
 </script>
 </body>

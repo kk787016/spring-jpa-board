@@ -1,7 +1,10 @@
 package com.example.boardHub.global.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -18,9 +21,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BoardNotFoundException.class)
-    public String handleBoardNotFoundException(BoardNotFoundException ex, RedirectAttributes redirectAttributes) {
-        log.warn("게시글 존재하지 않음: {}", ex.getMessage());
-        redirectAttributes.addFlashAttribute("errorMessage", "찾으시는 게시글이 존재하지 않거나 삭제되었습니다.");
-        return "redirect:/";
+    public ResponseEntity<String> handleBoardNotFoundException(BoardNotFoundException e) {
+        log.warn("게시글 존재하지 않음: {}", e.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND) // 404 상태 코드 반환
+                .body("요청한 게시글을 찾을 수 없습니다.");
     }
 }
