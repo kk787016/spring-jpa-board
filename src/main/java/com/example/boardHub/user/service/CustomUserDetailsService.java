@@ -1,6 +1,7 @@
 package com.example.boardHub.user.service;
 
 import com.example.boardHub.user.model.User;
+import com.example.boardHub.user.model.UserDetailsImpl;
 import com.example.boardHub.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -21,10 +22,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUserId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with userId: " + username));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUserId(),           // 로그인할 때
-                user.getPassword(),         // 암호화된 비밀번호
-                AuthorityUtils.createAuthorityList("ROLE_USER") // 권한 설정
-        );
+        return new UserDetailsImpl(user);
     }
 }
