@@ -60,13 +60,21 @@ public class CommentService {
         Comment comment = findCommentAndCheckOwnership(commentId, user);
         Comment parent = comment.getParent();
 
+//        리팩토링 가능
+//        if (!comment.isLastChild()){
+//            comment.softDelete();
+//            return;
+//        }
+//        commentRepository.delete(comment);
+//        return;
+/// ////////////////////////////////////////////////
         if (parent == null) {
             if (comment.getChildren().isEmpty()) {
                 commentRepository.delete(comment);
             } else {
                 comment.softDelete();
             }
-        } else {
+        } else { // 내가 마지막 자식이라면?
             boolean isLastChild = parent.isDeleted() && parent.getChildren().size() == 1;
 
             commentRepository.delete(comment);

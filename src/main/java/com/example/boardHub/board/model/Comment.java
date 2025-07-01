@@ -77,5 +77,8 @@ public class Comment {
         childComment.setParent(this);
     }
 
+    public boolean isLastChild() {
+        return this.parent.isDeleted() && this.getChildren().size() == 1;
+    }
 
 }
