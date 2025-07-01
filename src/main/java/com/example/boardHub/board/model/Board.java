@@ -12,13 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="boards")
+@Table(name = "boards")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Board {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -31,7 +32,7 @@ public class Board {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "board",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     @Setter
@@ -46,6 +47,7 @@ public class Board {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     private boolean deleted = false; // Soft delete 용도
@@ -53,11 +55,11 @@ public class Board {
     private Long viewCount;
 
     @Builder
-    public Board (String title,String content, User user, Board parent){
+    public Board(String title, String content, User user, Board parent) {
         this.title = title;
         this.content = content;
         this.user = user;
-        this.parent=parent;
+        this.parent = parent;
         this.viewCount = 0L;
         this.deleted = false;
     }
@@ -65,11 +67,9 @@ public class Board {
     public void updateTitle(String title) {
         this.title = title;
     }
+
     public void updateContent(String content) {
         this.content = content;
-    }
-    public void updateTime(LocalDateTime time) {
-        this.updatedAt = time;
     }
 
 

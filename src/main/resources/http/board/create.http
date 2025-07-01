@@ -16,7 +16,7 @@ POST http://localhost:8080/board/new
 Content-Type: application/json
 Authorization: Bearer tteyJeyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI5MDQ2MSwiZXhwIjoxNzUxMjkxMzYxfQ.nmV_jRXldgz4j1Hv0Z7-Ekxy18A-3B90c76zyRg68fA
 
-{
+ {
   "title": "첫 번째 게시판",
   "content": "이것은 첫 번째 테스트 게시판입니다."
 }

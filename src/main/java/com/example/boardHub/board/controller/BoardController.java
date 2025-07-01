@@ -24,7 +24,6 @@ import java.util.Objects;
 public class BoardController {
 
     private final BoardService boardService;
-    private final UserRepository userRepository;
 
     @GetMapping("/new")
     public String createForm() {

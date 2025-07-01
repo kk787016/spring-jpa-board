@@ -45,7 +45,7 @@ public class BoardService {
                 new BoardNotFoundException("게시글을 찾을 수 없습니다: " + boardId)
         );
 
-        board.incrementViewCount();
+        //board.incrementViewCount();
 
         return boardRepository.save(board);
     }
@@ -53,18 +53,23 @@ public class BoardService {
     @Transactional
     public void deleteBoard(Long boardId, User user) {
         Board board = findBoardAndCheckOwnership(boardId, user);
-        //boardRepository.delete(board); 전체 삭제 하면 안되고, delete = false
+        Board parent = board.getParent();
 
-        if (board.getParent() == null) {
-            if (board.getChildren().isEmpty())
-            {
+        if (parent == null) {
+            if (board.getChildren().isEmpty()) {
                 boardRepository.delete(board);
             } else {
                 board.softDelete();
             }
         } else {
+            boolean isLastChild = parent.isDeleted() && parent.getChildren().size() == 1;
+
             boardRepository.delete(board);
+            if (isLastChild) {
+                boardRepository.delete(parent);
+            }
         }
+
     }
 
     @Transactional
@@ -77,12 +82,11 @@ public class BoardService {
         if (requestDto.getContent() != null) {
             board.updateContent(requestDto.getContent());
         }
-        board.updateTime(LocalDateTime.now());
     }
 
     @Transactional
     public void registerReplyBoard(Long parentBoardId, BoardRequestDto boardRequestDto, User user) {
-        Board parentBoard = boardRepository.findById(parentBoardId).orElseThrow(()->
+        Board parentBoard = boardRepository.findById(parentBoardId).orElseThrow(() ->
                 new BoardNotFoundException("부모 게시글을 찾을 수 없습니다.")
         );
 
@@ -100,7 +104,7 @@ public class BoardService {
 
     private Board findBoardAndCheckOwnership(Long boardId, User user) {
 
-        Board board = boardRepository.findById(boardId).orElseThrow(() ->
+        Board board = boardRepository.findByIdAndDeletedFalseWithUser(boardId).orElseThrow(() ->
                 new BoardNotFoundException("해당 게시글을 찾을 수 없습니다.")
         );
 
@@ -110,4 +114,5 @@ public class BoardService {
 
         return board;
     }
+
 }

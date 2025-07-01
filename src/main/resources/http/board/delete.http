@@ -1,9 +1,9 @@
 
 ### 게시글 삭제 (PATCH)
 
-DELETE http://localhost:8080/board/delete/10
+DELETE http://localhost:8080/board/delete/16
 Content-Type:  application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTI3NDMwNSwiZXhwIjoxNzUxMjc1MjA1fQ.-RWFjiuwv8W9WmC32kZbZCuJ2FbXK4_wx-UyDBkEJ3Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTM3MjI3OSwiZXhwIjoxNzUxMzczMTc5fQ.b1biwMJgp4tqDKYu9t14iLIw4WuEiSSaDHLMp5jG-7k
 
 ### 게시글 삭제 (PATCH) - 잘못된 토큰
 

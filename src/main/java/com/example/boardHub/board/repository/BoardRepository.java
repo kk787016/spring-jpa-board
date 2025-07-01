@@ -18,6 +18,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByDeletedFalseOrderByCreatedAtDescWithUser();
 
     @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.id = :id AND b.deleted = false")
-    Optional<Board> findByIdAndDeletedFalseWithUser(Long id); // 메서드명 변경 및 파라미터 :id 지정
+    Optional<Board> findByIdAndDeletedFalseWithUser(Long id);
 
 }
