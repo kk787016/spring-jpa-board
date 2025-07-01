@@ -41,17 +41,45 @@
 
   <hr class="my-4">
   <h3>댓글</h3>
-  <div id="comments-section" class="mb-4">
+  <div class="mt-4">
+    <h4>댓글 작성</h4>
+    <form th:action="@{/comments/write}" method="post">
+      <input type="hidden" name="boardId" th:value="${board.id}" />
+      <textarea name="content" class="form-control mb-2" rows="3" placeholder="댓글 내용을 입력하세요" required></textarea>
+      <button type="submit" class="btn btn-primary">댓글 작성</button>
+    </form>
   </div>
 
-  <div class="mt-4" id="commentWriteSection" style="display: none;">
-    <h4>댓글 작성</h4>
-    <form id="comment-form">
-      <div class="form-group">
-        <textarea class="form-control" id="commentContent" rows="3" placeholder="댓글 내용을 입력하세요"></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary">댓글 달기</button>
-    </form>
+  <!-- ✅ 댓글 출력 -->
+  <div id="comments-section" class="mb-4 mt-4">
+    <ul class="list-group">
+      <li th:each="comment : ${board.comments}" class="list-group-item" th:if="${comment.parent == null}">
+        <strong th:if="${!comment.deleted}" th:text="${comment.user.nickname}">작성자</strong>
+        <strong th:if="${comment.deleted}" class="text-muted">삭제</strong>
+
+        <p th:if="${!comment.deleted}" th:text="${comment.content}">댓글 내용</p>
+        <p th:if="${comment.deleted}" class="text-muted">삭제된 댓글입니다</p>
+
+        <small th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</small>
+
+        <!-- 대댓글 작성 폼 -->
+        <form th:action="@{/comments/reply}" method="post" class="mt-2">
+          <input type="hidden" name="parentId" th:value="${comment.id}" />
+          <input type="hidden" name="boardId" th:value="${board.id}" />
+          <textarea name="content" class="form-control mb-1" rows="2" placeholder="답글을 입력하세요" required></textarea>
+          <button type="submit" class="btn btn-sm btn-secondary">답글 작성</button>
+        </form>
+
+        <!-- 대댓글 출력 -->
+        <ul class="list-group mt-2 ml-4">
+          <li th:each="reply : ${comment.children}" class="list-group-item">
+            <strong th:text="${reply.user.nickname}">작성자</strong>
+            <p th:text="${reply.content}">대댓글 내용</p>
+            <small th:text="${#temporals.format(reply.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</small>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </div>
 
 </div>

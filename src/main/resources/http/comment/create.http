@@ -1,0 +1,31 @@
+### 댓글 생성
+POST http://localhost:8080/api/boards/16/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTM2OTA4MCwiZXhwIjoxNzUxMzY5OTgwfQ.29C41CMUqHU5V4oYW3cnUxdLBgaDUiUsxfVzEZV-Cpk
+
+{
+  "content": "aaaasdfasdfasdfasdfasd 게시판입니다."
+}
+
+### 댓글 수정
+PATCH http://localhost:8080/api/boards/16/comments/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTM2MDE1NCwiZXhwIjoxNzUxMzYxMDU0fQ.Hga9shoOdnYC8ucmrJur_x_Sre0UxLSzjkh3JWDf8PM
+
+{
+"content": "수정 완료입니다."
+}
+
+### 댓글 삭제
+DELETE http://localhost:8080/api/boards/16/comments/14
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTM2OTg4NSwiZXhwIjoxNzUxMzcwNzg1fQ.eD1oAVdw8HaYuzTmMbQe0uW1a1tZSaY45fm3_KkLIuk
+
+### 대댓글 생성
+POST http://localhost:8080/api/boards/16/comments/9/new
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTM2OTgyNSwiZXhwIjoxNzUxMzcwNzI1fQ.ZL7TASSv-cdO39TYitFw2nlEVHPP1bpNKbcSumelxi0
+
+{
+"content": "a대댓글입니ㅁㄴㅇㄹ다."
+}

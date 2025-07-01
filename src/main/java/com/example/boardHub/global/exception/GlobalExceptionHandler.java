@@ -28,4 +28,13 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND) // 404 상태 코드 반환
                 .body("요청한 게시글을 찾을 수 없습니다.");
     }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<String> handleCommentNotFoundException(CommentNotFoundException e) {
+        log.warn("댓글 존재하지 않음: {}", e.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("요청한 댓글을 찾을 수 없습니다.");
+    }
 }
