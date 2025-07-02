@@ -5,17 +5,14 @@ import com.example.boardHub.board.model.Board;
 import com.example.boardHub.board.service.BoardService;
 import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.model.UserDetailsImpl;
-import com.example.boardHub.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 @Controller
@@ -34,7 +31,10 @@ public class BoardController {
     public String detail(@PathVariable Long boardId, Model model) {
 
         Board board = boardService.getBoardDetail(boardId);
+        long totalViews = boardService.getTotalViews(board);
         model.addAttribute("board", board);
+        model.addAttribute("totalViews", totalViews);
+        log.info(totalViews + " views");
 
         return "board/detail";
     }

@@ -73,8 +73,8 @@ public class Board {
     }
 
 
-    public void incrementViewCount() {
-        this.viewCount++;
+    public void updateViewCount(Long viewCount) {
+        this.viewCount = viewCount;
     }
 
     // Soft Delete 처리 메서드

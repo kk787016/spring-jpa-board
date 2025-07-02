@@ -7,10 +7,10 @@ import com.example.boardHub.global.exception.BoardNotFoundException;
 import com.example.boardHub.user.model.User;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,6 +18,7 @@ import java.util.List;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final RedisTemplate<String, Long> redisTemplate;
 
     @Transactional(readOnly = true)
     public List<Board> getAllBoards() {
@@ -46,8 +47,16 @@ public class BoardService {
         );
 
         //board.incrementViewCount();
+//        String redisKey = "board:view" + boardId;
+//        redisTemplate.opsForValue().increment(redisKey);
+//
+//        Long redisCount = redisTemplate.opsForValue().get(redisKey);
+//        long totalViews = board.getViewCount() + (redisCount != null ? redisCount : 0);
 
-        return boardRepository.save(board);
+        return board;
+        //return new BoardResponseDto(board,totalViews);
+        //return boardRepository.save(board);
+
     }
 
     @Transactional
@@ -102,6 +111,7 @@ public class BoardService {
         boardRepository.save(replyBoard);
     }
 
+
     private Board findBoardAndCheckOwnership(Long boardId, User user) {
 
         Board board = boardRepository.findByIdAndDeletedFalseWithUser(boardId).orElseThrow(() ->
@@ -115,4 +125,13 @@ public class BoardService {
         return board;
     }
 
+    public long getTotalViews(Board board) {
+
+
+        String redisKey = "board:view" + board.getId();
+        redisTemplate.opsForValue().increment(redisKey);
+
+        Long redisCount = redisTemplate.opsForValue().get("board:view" + board.getId());
+        return board.getViewCount() + (redisCount != null ? redisCount : 0);
+    }
 }
