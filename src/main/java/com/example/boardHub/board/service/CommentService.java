@@ -24,13 +24,12 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final BoardService boardService;
 
     @Transactional
     public void createComment(Long boardId, CommentDto commentDto, User user) {
 
-        Board board = boardRepository.findByIdAndDeletedFalseWithUser(boardId).orElseThrow(() ->
-                new BoardNotFoundException("댓글 작성 중 게시글을 찾을 수 없습니다: " + boardId)
-        );
+        Board board = boardService.findBoardForComment(boardId);
 
         Comment newComment = Comment.builder()
                 .content(commentDto.getContent())
@@ -58,31 +57,31 @@ public class CommentService {
     public void deleteComment(Long commentId, User user) {
 
         Comment comment = findCommentAndCheckOwnership(commentId, user);
-        Comment parent = comment.getParent();
+/*        Comment parent = comment.getParent();*/
 
 //        리팩토링 가능
-//        if (!comment.isLastChild()){
-//            comment.softDelete();
-//            return;
-//        }
-//        commentRepository.delete(comment);
-//        return;
-/// ////////////////////////////////////////////////
-        if (parent == null) {
-            if (comment.getChildren().isEmpty()) {
-                commentRepository.delete(comment);
-            } else {
-                comment.softDelete();
-            }
-        } else { // 내가 마지막 자식이라면?
-            boolean isLastChild = parent.isDeleted() && parent.getChildren().size() == 1;
-
-            commentRepository.delete(comment);
-
-            if (isLastChild) {
-                commentRepository.delete(parent);
-            }
+        if (!comment.isLastChild()){
+            comment.softDelete();
+            return;
         }
+        commentRepository.delete(comment);
+
+        
+        //        if (parent == null) {
+//            if (comment.getChildren().isEmpty()) {
+//                commentRepository.delete(comment);
+//            } else {
+//                comment.softDelete();
+//            }
+//        } else { // 내가 마지막 자식이라면?
+//            boolean isLastChild = parent.isDeleted() && parent.getChildren().size() == 1;
+//
+//            commentRepository.delete(comment);
+//
+//            if (isLastChild) {
+//                commentRepository.delete(parent);
+//            }
+//        }
     }
 
     @Transactional
@@ -91,9 +90,7 @@ public class CommentService {
                 new CommentNotFoundException("부모 댓글을 찾을 수 없습니다.")
         );
 
-        Board board = boardRepository.findByIdAndDeletedFalseWithUser(boardId).orElseThrow(() ->
-                new BoardNotFoundException("댓글 작성 중 게시글을 찾을 수 없습니다: " + boardId)
-        );
+        Board board = boardService.findBoardForComment(boardId);
 
         Comment replyComment = Comment.builder()
                 .content(commentDto.getContent())

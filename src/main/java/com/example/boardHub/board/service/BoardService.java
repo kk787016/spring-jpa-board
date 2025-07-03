@@ -110,7 +110,12 @@ public class BoardService {
 
         boardRepository.save(replyBoard);
     }
-
+    //findByIdAndDeletedFalseWithUser
+    public Board findBoardForComment(Long boardId) {
+        return boardRepository.findByIdAndDeletedFalseWithUser(boardId).orElseThrow(() ->
+                new BoardNotFoundException("댓글 작성 중 게시글을 찾을 수 없습니다: " + boardId)
+        );
+    }
 
     private Board findBoardAndCheckOwnership(Long boardId, User user) {
 
