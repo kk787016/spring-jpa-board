@@ -1,21 +1,16 @@
 package com.example.boardHub.board.service;
 
-import com.example.boardHub.board.dto.CommentDto;
+import com.example.boardHub.board.dto.request.CommentRequestDto;
 import com.example.boardHub.board.model.Board;
 import com.example.boardHub.board.model.Comment;
 import com.example.boardHub.board.repository.BoardRepository;
 import com.example.boardHub.board.repository.CommentRepository;
-import com.example.boardHub.global.exception.BoardNotFoundException;
 import com.example.boardHub.global.exception.CommentNotFoundException;
 import com.example.boardHub.user.model.User;
-import com.example.boardHub.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,12 +22,12 @@ public class CommentService {
     private final BoardService boardService;
 
     @Transactional
-    public void createComment(Long boardId, CommentDto commentDto, User user) {
+    public void createComment(Long boardId, CommentRequestDto commentRequestDto, User user) {
 
         Board board = boardService.findBoardForComment(boardId);
 
         Comment newComment = Comment.builder()
-                .content(commentDto.getContent())
+                .content(commentRequestDto.getContent())
                 .board(board)
                 .user(user)
                 .parent(null)
@@ -43,12 +38,12 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(Long commentId, CommentDto commentDto, User user) {
+    public void updateComment(Long commentId, CommentRequestDto commentRequestDto, User user) {
 
         Comment comment = findCommentAndCheckOwnership(commentId, user);
 
-        if (commentDto.getContent() != null) {
-            comment.updateContent(commentDto.getContent());
+        if (commentRequestDto.getContent() != null) {
+            comment.updateContent(commentRequestDto.getContent());
         }
 
     }
@@ -66,7 +61,7 @@ public class CommentService {
         }
         commentRepository.delete(comment);
 
-        
+
         //        if (parent == null) {
 //            if (comment.getChildren().isEmpty()) {
 //                commentRepository.delete(comment);
@@ -85,7 +80,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void registerReplyComment(Long boardId, Long parentCommentId, CommentDto commentDto, User user) {
+    public void registerReplyComment(Long boardId, Long parentCommentId, CommentRequestDto commentRequestDto, User user) {
         Comment parentComment = commentRepository.findById(parentCommentId).orElseThrow(() ->
                 new CommentNotFoundException("부모 댓글을 찾을 수 없습니다.")
         );
@@ -93,7 +88,7 @@ public class CommentService {
         Board board = boardService.findBoardForComment(boardId);
 
         Comment replyComment = Comment.builder()
-                .content(commentDto.getContent())
+                .content(commentRequestDto.getContent())
                 .board(board)
                 .user(user)
                 .parent(parentComment)

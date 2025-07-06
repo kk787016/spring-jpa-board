@@ -1,11 +1,11 @@
-package com.example.boardHub.board.dto;
+package com.example.boardHub.board.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CommentDto {
+public class CommentRequestDto {
     private String content;
 
 }

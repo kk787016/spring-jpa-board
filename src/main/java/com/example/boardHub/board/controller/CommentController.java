@@ -1,9 +1,7 @@
 package com.example.boardHub.board.controller;
 
 
-import com.example.boardHub.board.dto.BoardRequestDto;
-import com.example.boardHub.board.dto.CommentDto;
-import com.example.boardHub.board.model.Comment;
+import com.example.boardHub.board.dto.request.CommentRequestDto;
 import com.example.boardHub.board.service.CommentService;
 import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.model.UserDetailsImpl;
@@ -14,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -28,12 +25,12 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<?> createComment(@PathVariable Long boardId,
-                                           @RequestBody CommentDto commentDto,
+                                           @RequestBody CommentRequestDto commentRequestDto,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         User user = userDetails.getUser();
 
-        commentService.createComment(boardId, commentDto, user);
+        commentService.createComment(boardId, commentRequestDto, user);
 
         return ResponseEntity.status(HttpStatus.OK).body("댓글 생성 완료");
     }
@@ -41,12 +38,12 @@ public class CommentController {
     @PatchMapping("/{commentId}")
     public ResponseEntity<?> updateComment(@PathVariable Long boardId,
                                            @PathVariable Long commentId,
-                                           @RequestBody CommentDto commentDto,
+                                           @RequestBody CommentRequestDto commentRequestDto,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         User user = userDetails.getUser();
 
-        commentService.updateComment(commentId, commentDto, user);
+        commentService.updateComment(commentId, commentRequestDto, user);
 
         return ResponseEntity.status(HttpStatus.OK).body("댓글 수정 완료");
     }
@@ -66,12 +63,12 @@ public class CommentController {
     @PostMapping("/{parentCommentId}/new")
     public ResponseEntity<?> createReplyComment(@PathVariable Long boardId,
                                                 @PathVariable Long parentCommentId,
-                                                @RequestBody CommentDto commentDto,
+                                                @RequestBody CommentRequestDto commentRequestDto,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         User user = userDetails.getUser();
 
-        commentService.registerReplyComment(boardId, parentCommentId, commentDto, user);
+        commentService.registerReplyComment(boardId, parentCommentId, commentRequestDto, user);
 
         return ResponseEntity.ok().body(Map.of("message", "댓글 대댓글 성공"));
     }

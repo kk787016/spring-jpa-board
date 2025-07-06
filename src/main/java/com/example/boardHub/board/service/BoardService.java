@@ -1,6 +1,6 @@
 package com.example.boardHub.board.service;
 
-import com.example.boardHub.board.dto.BoardRequestDto;
+import com.example.boardHub.board.dto.request.BoardRequestDto;
 import com.example.boardHub.board.model.Board;
 import com.example.boardHub.board.repository.BoardRepository;
 import com.example.boardHub.global.exception.BoardNotFoundException;
@@ -42,20 +42,9 @@ public class BoardService {
     @Transactional
     public Board getBoardDetail(Long boardId) {
 
-        Board board = boardRepository.findByIdAndDeletedFalseWithUser(boardId).orElseThrow(() ->
+        return boardRepository.findByIdAndDeletedFalseWithUser(boardId).orElseThrow(() ->
                 new BoardNotFoundException("게시글을 찾을 수 없습니다: " + boardId)
         );
-
-        //board.incrementViewCount();
-//        String redisKey = "board:view" + boardId;
-//        redisTemplate.opsForValue().increment(redisKey);
-//
-//        Long redisCount = redisTemplate.opsForValue().get(redisKey);
-//        long totalViews = board.getViewCount() + (redisCount != null ? redisCount : 0);
-
-        return board;
-        //return new BoardResponseDto(board,totalViews);
-        //return boardRepository.save(board);
 
     }
 

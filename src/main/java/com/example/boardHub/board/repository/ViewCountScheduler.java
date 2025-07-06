@@ -20,7 +20,7 @@ public class ViewCountScheduler {
     private final RedisTemplate<String, Long> redisTemplate;
     private final BoardRepository boardRepository;
 
-    @Scheduled(cron = "*/20 * * * * *")
+    @Scheduled(cron = "*/20 20 * * * *")
     @Transactional
     public void flushViewCountToDB() {
         Set<String> keys = redisTemplate.keys("board:view*");

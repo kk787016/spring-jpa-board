@@ -11,77 +11,47 @@
 
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title" th:text="${board.title}"></h5>
+      <h5 class="card-title" id = "board-title" ></h5>
 
-      <h6 class="card-subtitle mb-2 text-muted" th:data-board-author-user-id="${board.user?.userId}">
-        작성자: <span th:text="${board.user.nickname}"></span>
+      <h6 class="card-subtitle mb-2 text-muted">
+        작성자: <span id="board-author"></span>
       </h6>
 
-      <p class="card-text" th:text="${board.content}"></p>
+      <p class="card-text" id = "board-content"></p>
 
       <p class="card-text">
-        <small class="text-muted">조회수: <span th:text="${totalViews}">0</span></small>
+        <small class="text-muted">조회수: <span id = "board-views">0</span></small>
       </p>
 
       <p class="card-text">
-        <small class="text-muted" th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+        <small class="text-muted" id="board-createdAt"></small>
+        <small class="text-muted" id="board-updateAt"></small>
       </p>
 
-      <p th:if="${board.updatedAt != null and board.createdAt != board.updatedAt}" class="card-text">
-        <small class="text-muted">(수정일: <span th:text="${#temporals.format(board.updatedAt, 'yyyy-MM-dd HH:mm:ss')}"></span>)</small>
-      </p>
+
+
     </div>
   </div>
 
-  <div class="mt-3" id="actionButtons">
-    <a id="editBtn" th:href="@{/board/edit/{id}(id=${board.id})}" class="btn btn-warning" style="display: none;">수정</a>
-    <button id="deleteBtn" class="btn btn-danger"th:onclick="|deleteBoard(${board.id})|" style="display: none;">삭제</button>
+  <div class="mt-3" id="action-buttons" data-author-id="">
     <a href="/" class="btn btn-secondary">목록으로 돌아가기</a>
   </div>
 
   <hr class="my-4">
   <h3>댓글</h3>
+
   <div class="mt-4">
     <h4>댓글 작성</h4>
-    <form th:action="@{/comments/write}" method="post">
-      <input type="hidden" name="boardId" th:value="${board.id}" />
+    <form id="comment-form">
       <textarea name="content" class="form-control mb-2" rows="3" placeholder="댓글 내용을 입력하세요" required></textarea>
       <button type="submit" class="btn btn-primary">댓글 작성</button>
     </form>
   </div>
 
-  <!-- ✅ 댓글 출력 -->
   <div id="comments-section" class="mb-4 mt-4">
-    <ul class="list-group">
-      <li th:each="comment : ${board.comments}" class="list-group-item" th:if="${comment.parent == null}">
-        <strong th:if="${!comment.deleted}" th:text="${comment.user.nickname}">작성자</strong>
-        <strong th:if="${comment.deleted}" class="text-muted">삭제</strong>
-
-        <p th:if="${!comment.deleted}" th:text="${comment.content}">댓글 내용</p>
-        <p th:if="${comment.deleted}" class="text-muted">삭제된 댓글입니다</p>
-
-        <small th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</small>
-
-        <!-- 대댓글 작성 폼 -->
-        <form th:action="@{/comments/reply}" method="post" class="mt-2">
-          <input type="hidden" name="parentId" th:value="${comment.id}" />
-          <input type="hidden" name="boardId" th:value="${board.id}" />
-          <textarea name="content" class="form-control mb-1" rows="2" placeholder="답글을 입력하세요" required></textarea>
-          <button type="submit" class="btn btn-sm btn-secondary">답글 작성</button>
-        </form>
-
-        <!-- 대댓글 출력 -->
-        <ul class="list-group mt-2 ml-4">
-          <li th:each="reply : ${comment.children}" class="list-group-item">
-            <strong th:text="${reply.user.nickname}">작성자</strong>
-            <p th:text="${reply.content}">대댓글 내용</p>
-            <small th:text="${#temporals.format(reply.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</small>
-          </li>
-        </ul>
-      </li>
+    <ul id="comment-list" class="list-group">
     </ul>
   </div>
-
 </div>
 
 <script>
@@ -116,6 +86,66 @@
     const boardAuthorH6Element = document.querySelector('h6[data-board-author-user-id]');
     const boardWriterId = boardAuthorH6Element ? boardAuthorH6Element.dataset.boardAuthorUserId : null;
 
+    const boardId = window.location.pathname.split('/').pop();
+
+    function renderBoard(board) {
+      document.getElementById('board-title').textContent = board.title;
+      document.getElementById('board-author').textContent = board.nickname;
+      document.getElementById('board-content').textContent = board.content;
+      document.getElementById('board-views').textContent = board.totalViews;
+      document.getElementById('board-createdAt').textContent = '작성일: ' + new Date(board.createdAt).toLocaleString();
+
+      // 수정/삭제 버튼 로직을 위해 작성자 ID를 data 속성에 저장
+      document.getElementById('action-buttons').dataset.authorId = board.userId;
+    }
+
+    function renderComments(comments, container) {
+      container.innerHTML = ''; // 기존 댓글 목록 초기화
+
+      if (!comments) return;
+
+      comments.forEach(comment => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+
+        if (comment.deleted) {
+          li.innerHTML = `<p class="text-muted">${comment.content}</p>`;
+        } else {
+          li.innerHTML = `
+                    <strong>${comment.nickname}</strong>
+                    <p style="margin: 5px 0;">${comment.content}</p>
+                    <small class="text-muted">${new Date(comment.createdAt).toLocaleString()}</small>
+                `;
+        }
+        container.appendChild(li);
+
+        // 대댓글이 있으면 재귀 호출
+        if (comment.children && comment.children.length > 0) {
+          const childUl = document.createElement('ul');
+          childUl.className = 'list-group mt-2 ml-4';
+          li.appendChild(childUl);
+          renderComments(comment.children, childUl);
+        }
+      });
+    }
+    fetch(`/api/board/${boardId}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error("게시글 정보를 불러올 수 없습니다.")
+              }
+              return response.json();
+            })
+            .then(data => {
+              renderBoard(data);
+              renderComments(data.comments, document.getElementById('comment-list'));
+              setupActionButtons(data.userId);
+              setupCommentForm(boardId);
+            })
+            .catch(error => {
+              alert(error.message);
+              window.location.href = '/';
+            })
+
     if (token) {
       const decodedToken = parseJwt(token);
       // 토큰 페이로드에 'userId' 클레임이 있다고 가정. 없다면 'sub' 등 다른 키를 확인하세요.
@@ -127,25 +157,84 @@
         editBtn.style.display = 'inline-block';
         deleteBtn.style.display = 'inline-block';
       }
+
     }
   });
+  function setupActionButtons(authorId) {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
 
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentUserId = payload.id; // JWT 페이로드에 id가 있다고 가정
 
-  function deleteBoard(id) {
-    if (confirm("정말 이 게시글을 삭제하시겠습니까?")) {
-      const form = document.createElement('form');
-      form.setAttribute('method', 'patch');
-      form.setAttribute('action', '/board/delete');
+      if (currentUserId === authorId) {
+        const container = document.getElementById('action-buttons');
+        const boardId = window.location.pathname.split('/').pop();
 
-      const hiddenField = document.createElement('input');
-      hiddenField.setAttribute('type', 'hidden');
-      hiddenField.setAttribute('name', 'id');
-      hiddenField.setAttribute('value', id);
+        const editBtn = document.createElement('a');
+        editBtn.href = `/board/edit/${boardId}`; // 수정 페이지 URL
+        editBtn.className = 'btn btn-warning';
+        editBtn.textContent = '수정';
 
-      form.appendChild(hiddenField);
-      document.body.appendChild(form);
-      form.submit();
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-danger ml-2';
+        deleteBtn.textContent = '삭제';
+        deleteBtn.onclick = () => deleteBoard(boardId);
+
+        container.prepend(deleteBtn);
+        container.prepend(editBtn);
+      }
+    } catch (e) {
+      console.error("토큰 처리 중 오류 발생:", e);
     }
+  }
+  function setupCommentForm(boardId) {
+    const commentForm = document.getElementById('comment-form');
+    commentForm.addEventListener('submit', function (event) {
+      event.preventDefault(); // 폼 기본 동작 방지
+
+      const content = event.target.content.value;
+      const token = localStorage.getItem('accessToken');
+
+      fetch('/api/boards/${boardId}/comments', { // 댓글 작성 API 엔드포인트
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({
+          boardId: boardId,
+          content: content
+        })
+      }).then(response => {
+        if (response.ok) {
+          window.location.reload(); // 성공 시 페이지 새로고침
+        } else {
+          alert('댓글 작성에 실패했습니다.');
+        }
+      });
+    });
+  }
+
+
+  function deleteBoard(boardId) {
+    if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
+
+    const token = localStorage.getItem('accessToken');
+    fetch(`/api/board/${boardId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    }).then(response => {
+      if (response.ok) {
+        alert('게시글이 삭제되었습니다.');
+        window.location.href = '/';
+      } else {
+        alert('게시글 삭제에 실패했습니다.');
+      }
+    });
   }
 </script>
 </body>
