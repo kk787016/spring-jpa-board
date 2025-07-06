@@ -9,6 +9,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -23,28 +26,43 @@ public class ViewCountScheduler {
     @Scheduled(cron = "*/20 20 * * * *")
     @Transactional
     public void flushViewCountToDB() {
+
+        System.out.println("### 게시글 DB 동기화 스케줄러 시작 ###");
+
         Set<String> keys = redisTemplate.keys("board:view*");
 
-        if (keys.isEmpty()) {
-            return;
-        }
+        if (keys.isEmpty()) return;
 
+        Map<Long, Long> viewCountMap = new HashMap<>();
         for (String key : keys) {
-            Long incrementCount = redisTemplate.opsForValue().get(key);
-            if (incrementCount == null || incrementCount == 0) continue;
+            try {
+                Long incrementCount = redisTemplate.opsForValue().getAndDelete(key);
 
-            Long boardId = Long.valueOf(key.replace("board:view", ""));
+                if (incrementCount != null && incrementCount > 0) {
 
-            Board board = boardRepository.findById(boardId).orElse(null);
-            if (board == null) {
-                redisTemplate.delete(key);
-                continue;
+                    long boardId = Long.parseLong(key.replace("board:view", ""));
+                    viewCountMap.put(boardId, incrementCount);
+
+                }
+            } catch (Exception e) {
+                log.error("조회수 키 처리 중 오류 발생: {}", key, e);
             }
-
-            board.updateViewCount(board.getViewCount() + incrementCount);
-            boardRepository.save(board);
-
-            redisTemplate.delete(key);
         }
+
+        if (viewCountMap.isEmpty()) return;
+
+        List<Long> boardIds = new java.util.ArrayList<>(viewCountMap.keySet());
+        List<Board> boardsToUpdate = boardRepository.findAllById(boardIds);
+
+        for (Board board : boardsToUpdate) {
+            long incrementCount = viewCountMap.getOrDefault(board.getId(), 0L);
+            board.updateViewCount(board.getViewCount() + incrementCount);
+        }
+
+        boardRepository.saveAll(boardsToUpdate);
+
+        log.info("### {}개의 게시글 조회수 동기화 완료 ###", boardsToUpdate.size());
+        System.out.println("### 게시글 DB 동기화 스케줄러 종료 ###");
+
     }
 }

@@ -24,6 +24,9 @@ spring:
       hibernate:
         format_sql: true
         use_sql_comments: true
+        jdbc:
+          batch_size: 50
+        order_updates: true
   data:
     redis:
       host: localhost
