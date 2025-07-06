@@ -54,6 +54,12 @@ public class Board {
 
     private Long viewCount;
 
+    @Column(nullable = false)
+    private int likeCount = 0;
+
+    @Column(nullable = false)
+    private int disLikeCount = 0;
+
     @Builder
     public Board(String title, String content, User user, Board parent) {
         this.title = title;
@@ -90,6 +96,11 @@ public class Board {
     public void addComment(Comment comment) {
         this.comments.add(comment);
         comment.setBoard(this); // Comment 엔티티에도 Board 설정
+    }
+    public void updateLikeCount(int likeCount, int disLikeCount) {
+        this.likeCount = likeCount;
+        this.disLikeCount = disLikeCount;
+
     }
 
 }

@@ -120,8 +120,6 @@ public class BoardService {
     }
 
     public long getTotalViews(Board board) {
-
-
         String redisKey = "board:view" + board.getId();
         redisTemplate.opsForValue().increment(redisKey);
 

@@ -32,7 +32,10 @@
 
     </div>
   </div>
-
+  <div class="mt-3">
+    <button id="like-btn" class="btn btn-outline-success">👍 추천 <span id="like-count">0</span></button>
+    <button id="dislike-btn" class="btn btn-outline-danger ml-2">👎 비추천 <span id="dislike-count">0</span></button>
+  </div>
   <div class="mt-3" id="action-buttons" data-author-id="">
     <a href="/" class="btn btn-secondary">목록으로 돌아가기</a>
   </div>
@@ -88,6 +91,11 @@
 
     const boardId = window.location.pathname.split('/').pop();
 
+    function setupRecommendationButtons(boardId) {
+      document.getElementById('like-btn').addEventListener('click', () => handleRecommendationClick(boardId, 'LIKE'));
+      document.getElementById('dislike-btn').addEventListener('click', () => handleRecommendationClick(boardId, 'DISLIKE'));
+    }
+
     function renderBoard(board) {
       document.getElementById('board-title').textContent = board.title;
       document.getElementById('board-author').textContent = board.nickname;
@@ -97,6 +105,13 @@
 
       // 수정/삭제 버튼 로직을 위해 작성자 ID를 data 속성에 저장
       document.getElementById('action-buttons').dataset.authorId = board.userId;
+
+      updateRecommendationUI({
+        likeCount: board.likeCount,
+        dislikeCount: board.dislikeCount,
+        userLiked: board.userLiked,
+        userDisliked: board.userDisliked
+      });
     }
 
     function renderComments(comments, container) {
@@ -140,6 +155,7 @@
               renderComments(data.comments, document.getElementById('comment-list'));
               setupActionButtons(data.userId);
               setupCommentForm(boardId);
+              setupRecommendationButtons(boardId);
             })
             .catch(error => {
               alert(error.message);
@@ -189,6 +205,56 @@
       console.error("토큰 처리 중 오류 발생:", e);
     }
   }
+
+  function handleRecommendationClick(boardId, type) {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    fetch(`/api/board/${boardId}/recommend`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ type: type }) // "LIKE" 또는 "DISLIKE"
+    })
+            .then(response => {
+              if (!response.ok) throw new Error('추천/비추천 처리에 실패했습니다.');
+              return response.json();
+            })
+            .then(data => {
+              // 서버로부터 받은 최신 데이터로 UI를 업데이트
+              updateRecommendationUI(data);
+            })
+            .catch(error => alert(error.message));
+  }
+
+  /** ✨ [추가] 추천/비추천 수와 버튼 스타일을 업데이트하는 함수 */
+  function updateRecommendationUI(data) {
+    document.getElementById('like-count').textContent = data.likeCount;
+    document.getElementById('dislike-count').textContent = data.dislikeCount;
+
+    const likeBtn = document.getElementById('like-btn');
+    const dislikeBtn = document.getElementById('dislike-btn');
+
+    // '추천' 상태에 따라 버튼 스타일 변경
+    if (data.userLiked) {
+      likeBtn.classList.replace('btn-outline-success', 'btn-success');
+    } else {
+      likeBtn.classList.replace('btn-success', 'btn-outline-success');
+    }
+
+    // '비추천' 상태에 따라 버튼 스타일 변경
+    if (data.userDisliked) {
+      dislikeBtn.classList.replace('btn-outline-danger', 'btn-danger');
+    } else {
+      dislikeBtn.classList.replace('btn-danger', 'btn-outline-danger');
+    }
+  }
+
   function setupCommentForm(boardId) {
     const commentForm = document.getElementById('comment-form');
     commentForm.addEventListener('submit', function (event) {

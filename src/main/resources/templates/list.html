@@ -17,6 +17,14 @@
 
   <h1 class="my-4">게시글 리스트</h1>
 
+
+  <h2 class="my-4">🔥 베스트 게시글 TOP 3 🔥</h2>
+  <div id="best-posts-section" class="mb-4">
+    <ol id="best-posts-list" class="list-group">
+      <li class="list-group-item">베스트 게시글을 불러오는 중...</li>
+    </ol>
+  </div>
+  <hr/>
   <!-- 로그인한 사용자 정보 표시 -->
   <div class="mb-3 d-flex align-items-center">
     <span id="userInfo" class="font-weight-bold"></span>
@@ -80,6 +88,8 @@
     const userInfoEl = document.getElementById("userInfo");
     const authButtons = document.getElementById("authButtons");
     const logoutBtn = document.getElementById("logoutBtn");
+    fetchAndRenderBestPosts();
+
 
     if (token) {
       const payload = parseJwt(token);
@@ -95,6 +105,56 @@
     }
   });
 
+  function renderBestPosts(bestBoards) {
+    const bestPostsList = document.getElementById("best-posts-list");
+    bestPostsList.innerHTML = ''; // "불러오는 중..." 메시지 삭제
+
+    if (bestBoards.length === 0) {
+      bestPostsList.innerHTML = '<li class="list-group-item">아직 베스트 게시글이 없습니다.</li>';
+      return;
+    }
+
+    bestBoards.forEach((board, index) => {
+      // li 요소 생성
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+      // a 태그(링크) 생성
+      const link = document.createElement('a');
+      link.href = `/boards/${board.id}`; // 상세 페이지 경로
+      link.textContent = `${index + 1}위: ${board.title} (작성자: ${board.nickname})`;
+
+      // 점수 span 생성
+      const scoreSpan = document.createElement('span');
+      scoreSpan.className = 'badge badge-primary badge-pill';
+      scoreSpan.textContent = `점수: ${board.score}`;
+
+      // li에 자식 요소들 추가
+      li.appendChild(link);
+      li.appendChild(scoreSpan);
+
+      // 최종적으로 ul에 li 추가
+      bestPostsList.appendChild(li);
+    });
+  }
+  function fetchAndRenderBestPosts() {
+    fetch('/api/board/best') // 이전에 만든 베스트 게시글 API 호출
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('베스트 게시글을 불러오는데 실패했습니다.');
+              }
+              return response.json();
+            })
+            .then(bestBoards => {
+              // 성공적으로 데이터를 받아오면, 화면에 그리는 함수 호출
+              renderBestPosts(bestBoards);
+            })
+            .catch(error => {
+              console.error(error);
+              const bestPostsList = document.getElementById("best-posts-list");
+              bestPostsList.innerHTML = '<li class="list-group-item text-danger">베스트 게시글을 불러올 수 없습니다.</li>';
+            });
+  }
   // 로그아웃 함수
   function logout() {
     localStorage.removeItem("accessToken");
