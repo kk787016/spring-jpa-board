@@ -1,10 +1,12 @@
 package com.example.boardHub.board.model;
 
+import com.example.boardHub.global.config.BaseEntity;
 import com.example.boardHub.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.Auditable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
@@ -14,15 +16,10 @@ import java.util.List;
 
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "comments")
-@EntityListeners(AuditingEntityListener.class)
-public class Comment {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Comment extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
@@ -46,13 +43,6 @@ public class Comment {
 
     @Column(nullable = false)
     private boolean deleted = false; // Soft delete 용도
-
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     @Builder
     public Comment(String content, Board board, User user, Comment parent) {

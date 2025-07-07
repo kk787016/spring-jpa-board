@@ -1,5 +1,6 @@
 package com.example.boardHub.board.model;
 
+import com.example.boardHub.global.config.BaseEntity;
 import com.example.boardHub.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,15 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "boards")
 @Getter
+@Table(name = "boards")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-public class Board {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Board extends BaseEntity {
 
     @Column(nullable = false)
     private String title;
@@ -42,13 +38,6 @@ public class Board {
 
     @OneToMany(mappedBy = "parent")
     private List<Board> children = new ArrayList<>();
-
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     private boolean deleted = false; // Soft delete 용도
 

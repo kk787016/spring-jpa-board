@@ -2,6 +2,7 @@ package com.example.boardHub.user.model;
 
 import com.example.boardHub.board.model.Board;
 import com.example.boardHub.board.model.Comment;
+import com.example.boardHub.global.config.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,13 +13,9 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class User extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String userId;
@@ -31,10 +28,6 @@ public class User {
 
     @Column(nullable = false,unique = true)
     private String nickname;
-
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)  // 게시판 지워져도 유저는 있어야 되니까. casecade X
     private List<Board> boards = new ArrayList<>();
