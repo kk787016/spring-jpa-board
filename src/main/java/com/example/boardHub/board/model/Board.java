@@ -18,10 +18,10 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,14 +39,15 @@ public class Board extends BaseEntity {
     @OneToMany(mappedBy = "parent")
     private List<Board> children = new ArrayList<>();
 
+    @Column(nullable = false)
     private boolean deleted = false; // Soft delete 용도
 
     private Long viewCount;
 
-    @Column(nullable = false)
+    @Column(name = "like_count", nullable = false)
     private int likeCount = 0;
 
-    @Column(nullable = false)
+    @Column(name = "dislike_count", nullable = false)
     private int disLikeCount = 0;
 
     @Builder

@@ -21,18 +21,23 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseEntity {
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(nullable = false)
+    private boolean deleted = false; // Soft delete 용도
+
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
-    @Setter
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+
+    // 자기 참조
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -41,8 +46,7 @@ public class Comment extends BaseEntity {
     @OneToMany(mappedBy = "parent")
     private List<Comment> children = new ArrayList<>();
 
-    @Column(nullable = false)
-    private boolean deleted = false; // Soft delete 용도
+
 
     @Builder
     public Comment(String content, Board board, User user, Comment parent) {

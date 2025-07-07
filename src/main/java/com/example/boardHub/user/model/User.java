@@ -17,16 +17,16 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "user_id", nullable = false, unique = true)
     private String userId;
 
-    @Column(nullable = false)
+    @Column(name = "password",nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(name = "user_name", nullable = false)
     private String username;
 
-    @Column(nullable = false,unique = true)
+    @Column(name = "nickname", nullable = false,unique = true)
     private String nickname;
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)  // 게시판 지워져도 유저는 있어야 되니까. casecade X
