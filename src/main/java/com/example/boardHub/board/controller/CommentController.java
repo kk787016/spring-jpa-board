@@ -41,6 +41,7 @@ public class CommentController {
                                            @RequestBody CommentRequestDto commentRequestDto,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
+
         User user = userDetails.getUser();
 
         commentService.updateComment(commentId, commentRequestDto, user);

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class BoardResponseDto {
 
     private Long id;
-      String title;
+    private String title;
     private String content;
     private List<CommentResponseDto> comments;
 

@@ -1,24 +1,43 @@
 package com.example.boardHub.board.service;
 
 import com.example.boardHub.board.dto.request.BoardRequestDto;
+import com.example.boardHub.board.dto.response.BoardBestResponseDto;
+import com.example.boardHub.board.dto.response.BoardSimpleResponseDto;
 import com.example.boardHub.board.model.Board;
 import com.example.boardHub.board.repository.BoardRepository;
 import com.example.boardHub.global.exception.BoardNotFoundException;
 import com.example.boardHub.user.model.User;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
-    private final RedisTemplate<String, Long> redisTemplate;
+    private final RedisTemplate<String, Long> redisTemplateForViewCount;
+    private final RedisTemplate<String, Object> redisTemplateForCaching;
+
+    public BoardService(BoardRepository boardRepository,
+                        @Qualifier("redisTemplateForViewCount") RedisTemplate<String, Long> redisTemplateForViewCount,
+                        @Qualifier("redisTemplateForCaching")  RedisTemplate<String, Object> redisTemplateForCaching) {
+        this.boardRepository = boardRepository;
+        this.redisTemplateForViewCount = redisTemplateForViewCount;
+        this.redisTemplateForCaching = redisTemplateForCaching;
+    }
+
+    private static final String BEST_BOARD_KEY = "best:boards";
 
     @Transactional(readOnly = true)
     public List<Board> getAllBoards() {
@@ -121,9 +140,32 @@ public class BoardService {
 
     public long getTotalViews(Board board) {
         String redisKey = "board:view" + board.getId();
-        redisTemplate.opsForValue().increment(redisKey);
+        redisTemplateForViewCount.opsForValue().increment(redisKey);
 
-        Long redisCount = redisTemplate.opsForValue().get("board:view" + board.getId());
+        Long redisCount = redisTemplateForViewCount.opsForValue().get("board:view" + board.getId());
         return board.getViewCount() + (redisCount != null ? redisCount : 0);
+    }
+
+
+    public BoardBestResponseDto getBestBoards() {
+
+        @SuppressWarnings("unchecked")
+        List<BoardSimpleResponseDto> cached = (List<BoardSimpleResponseDto>) redisTemplateForCaching.opsForValue().get(BEST_BOARD_KEY);
+
+        if (cached != null) {
+            log.info("✅ 캐시 히트 - 베스트 게시글");
+            return new BoardBestResponseDto(cached);
+        }
+
+        LocalDateTime yesterday = LocalDateTime.now().minusHours(24);
+        List<Board> bestBoards = boardRepository.findTop3ByCreatedAtAfterOrderByLikeCountDesc(yesterday);
+
+        List<BoardSimpleResponseDto> responseDtoList = bestBoards.stream()
+                .map(BoardSimpleResponseDto::new)
+                .collect(Collectors.toList());
+
+        redisTemplateForCaching.opsForValue().set(BEST_BOARD_KEY, responseDtoList, Duration.ofMinutes(5));
+
+        return new BoardBestResponseDto(responseDtoList);
     }
 }

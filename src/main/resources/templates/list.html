@@ -121,13 +121,13 @@
 
       // a 태그(링크) 생성
       const link = document.createElement('a');
-      link.href = `/boards/${board.id}`; // 상세 페이지 경로
+      link.href = `/board/${board.id}`; // 상세 페이지 경로
       link.textContent = `${index + 1}위: ${board.title} (작성자: ${board.nickname})`;
 
       // 점수 span 생성
       const scoreSpan = document.createElement('span');
       scoreSpan.className = 'badge badge-primary badge-pill';
-      scoreSpan.textContent = `점수: ${board.score}`;
+      scoreSpan.textContent = `점수: ${board.likeCount}`;
 
       // li에 자식 요소들 추가
       li.appendChild(link);
@@ -145,9 +145,9 @@
               }
               return response.json();
             })
-            .then(bestBoards => {
+            .then(data => {
               // 성공적으로 데이터를 받아오면, 화면에 그리는 함수 호출
-              renderBestPosts(bestBoards);
+              renderBestPosts(data.boards);
             })
             .catch(error => {
               console.error(error);

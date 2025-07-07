@@ -1,6 +1,7 @@
 package com.example.boardHub.board.controller;
 
 import com.example.boardHub.board.dto.request.BoardRequestDto;
+import com.example.boardHub.board.dto.response.BoardBestResponseDto;
 import com.example.boardHub.board.dto.response.BoardResponseDto;
 import com.example.boardHub.board.model.Board;
 import com.example.boardHub.board.service.BoardService;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -39,8 +41,12 @@ public class BoardApiController {
 
         BoardResponseDto responseBoard = new BoardResponseDto(board,totalViews);
 
-
         return ResponseEntity.ok(responseBoard);
+    }
+    @GetMapping("/best")
+    public ResponseEntity<BoardBestResponseDto> bestBoard() {
+        BoardBestResponseDto response = boardService.getBestBoards();
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/delete/{deleteBoardId}")
@@ -80,5 +86,6 @@ public class BoardApiController {
 
         return ResponseEntity.ok().body(Map.of("message", "게시판 답글 성공"));
     }
+
 
 }
