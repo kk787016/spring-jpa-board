@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 public class BoardBestResponseDto {
 
-    private List<BoardSimpleResponseDto> boards;
+    private final List<BoardSimpleResponseDto> boards;
 
     public BoardBestResponseDto(List<BoardSimpleResponseDto> boards) {
         this.boards = boards;

@@ -10,22 +10,30 @@ import java.util.stream.Collectors;
 @Getter
 public class BoardResponseDto {
 
-    private Long id;
-    private String title;
-    private String content;
-    private List<CommentResponseDto> comments;
+    private final Long id;
+    private final String title;
+    private final String content;
+    private final List<CommentResponseDto> comments;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
 
-    private Long totalViews;
+    private final Long totalViews;
 
-    private Long userId;
-    private String nickname;
+    private final Long userId;
+    private final String nickname;
 
-    private boolean deleted;
+    private final boolean deleted;
 
-    public BoardResponseDto(Board board, Long newViewCount) {
+    private final long likeCount;
+    private final long dislikeCount;
+    private final boolean userLiked;
+    private final boolean userDisLiked;
+
+    public BoardResponseDto(Board board,
+                            Long newViewCount,
+                            RecommendationResponseDto r,
+                            List<CommentResponseDto> commentResponses) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
@@ -35,9 +43,10 @@ public class BoardResponseDto {
         this.userId = board.getUser().getId();
         this.nickname = board.getUser().getNickname();
         this.deleted = board.isDeleted();
-        this.comments = board.getComments().stream()
-                .filter(comment -> comment.getParent() == null)
-                .map(CommentResponseDto::new)
-                .collect(Collectors.toList());
+        this.likeCount = r.getLikeCount();
+        this.dislikeCount = r.getDislikeCount();
+        this.userLiked = r.isUserLiked();
+        this.userDisLiked = r.isUserDisLiked();
+        this.comments = commentResponses;
     }
 }
