@@ -1,6 +1,7 @@
 package com.example.boardHub.board.service;
 
 import com.example.boardHub.board.dto.request.CommentRequestDto;
+import com.example.boardHub.board.dto.response.CommentResponseDto;
 import com.example.boardHub.board.model.Board;
 import com.example.boardHub.board.model.Comment;
 import com.example.boardHub.board.repository.BoardRepository;
@@ -11,6 +12,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -116,4 +122,31 @@ public class CommentService {
     }
 
 
+    public List<CommentResponseDto> buildTwoLevelCommentTree(List<Comment> comments) {
+
+        Map<Long, CommentResponseDto> dtoMap = new HashMap<>();
+        List<CommentResponseDto> rootComments = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            CommentResponseDto dto = new CommentResponseDto(comment);
+            dtoMap.put(comment.getId(), dto);
+        }
+
+        for (Comment comment : comments) {
+            CommentResponseDto dto = dtoMap.get(comment.getId());
+
+            if (comment.getParent() == null) {
+                // 댓글
+                rootComments.add(dto);
+            } else {
+                // 대댓글
+                CommentResponseDto parentDto = dtoMap.get(comment.getParent().getId());
+                if (parentDto != null) {
+                    parentDto.addChild(dto); // 부모에 대댓글 추가
+                }
+            }
+        }
+
+        return rootComments;
+    }
 }

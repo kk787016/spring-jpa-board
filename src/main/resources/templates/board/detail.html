@@ -80,7 +80,6 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     const token = localStorage.getItem('accessToken');
-
     // 수정 및 삭제 버튼 요소 가져오기 (초기에 display: none; 상태)
     const editBtn = document.getElementById('editBtn');
     const deleteBtn = document.getElementById('deleteBtn');
@@ -90,6 +89,13 @@
     const boardWriterId = boardAuthorH6Element ? boardAuthorH6Element.dataset.boardAuthorUserId : null;
 
     const boardId = window.location.pathname.split('/').pop();
+
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    }
 
     function setupRecommendationButtons(boardId) {
       document.getElementById('like-btn').addEventListener('click', () => handleRecommendationClick(boardId, 'LIKE'));
@@ -110,7 +116,7 @@
         likeCount: board.likeCount,
         dislikeCount: board.dislikeCount,
         userLiked: board.userLiked,
-        userDisliked: board.userDisliked
+        userDisLiked: board.userDisLiked
       });
     }
 
@@ -143,7 +149,11 @@
         }
       });
     }
-    fetch(`/api/board/${boardId}`)
+
+    fetch(`/api/board/${boardId}` , {
+      method: 'GET',
+      headers: headers
+    })
             .then(response => {
               if (!response.ok) {
                 throw new Error("게시글 정보를 불러올 수 없습니다.")
@@ -178,12 +188,12 @@
   });
   function setupActionButtons(authorId) {
     const token = localStorage.getItem('accessToken');
+
     if (!token) return;
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const currentUserId = payload.id; // JWT 페이로드에 id가 있다고 가정
-
       if (currentUserId === authorId) {
         const container = document.getElementById('action-buttons');
         const boardId = window.location.pathname.split('/').pop();
@@ -248,7 +258,7 @@
     }
 
     // '비추천' 상태에 따라 버튼 스타일 변경
-    if (data.userDisliked) {
+    if (data.userDisLiked) {
       dislikeBtn.classList.replace('btn-outline-danger', 'btn-danger');
     } else {
       dislikeBtn.classList.replace('btn-danger', 'btn-outline-danger');
@@ -263,7 +273,7 @@
       const content = event.target.content.value;
       const token = localStorage.getItem('accessToken');
 
-      fetch('/api/boards/${boardId}/comments', { // 댓글 작성 API 엔드포인트
+      fetch(`/api/boards/${boardId}/comments`, { // 댓글 작성 API 엔드포인트
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

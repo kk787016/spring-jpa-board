@@ -7,10 +7,10 @@ import lombok.Getter;
 @Getter
 public class BoardSimpleResponseDto {
 
-    private Long id;
-    private String title;
-    private String nickname;
-    private int likeCount;
+    private final Long id;
+    private final String title;
+    private final String nickname;
+    private final int likeCount;
 
     public BoardSimpleResponseDto(Board board) {
         this.id = board.getId();

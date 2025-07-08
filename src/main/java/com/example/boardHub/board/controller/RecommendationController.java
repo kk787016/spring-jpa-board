@@ -1,5 +1,7 @@
 package com.example.boardHub.board.controller;
 
+import com.example.boardHub.board.dto.request.RecommendationRequestDto;
+import com.example.boardHub.board.dto.response.RecommendationResponseDto;
 import com.example.boardHub.board.model.RecommendationType;
 import com.example.boardHub.board.service.RecommendationService;
 import com.example.boardHub.user.model.User;
@@ -27,15 +29,11 @@ public class RecommendationController {
 
         Long userId = userDetails.getUser().getId();
 
-        Map<String, Object> result = recommendationService.processRecommendation(boardId,userId, requestDto.getType());
+        RecommendationResponseDto result = recommendationService.processRecommendation(boardId, userId, requestDto.getType());
 
         return ResponseEntity.ok(result);
 
     }
+
 }
 
-
-@Getter
-class RecommendationRequestDto {
-    private RecommendationType type;
-}

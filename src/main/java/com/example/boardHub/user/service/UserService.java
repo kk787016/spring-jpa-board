@@ -6,11 +6,8 @@ import com.example.boardHub.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +18,7 @@ public class UserService {
 
 
     @Transactional
-    public User registerUser(UserRequestDto userRequestDto) {
+    public void registerUser(UserRequestDto userRequestDto) {
         if (userRepository.existsByUserId(userRequestDto.getUserId())) {
             throw new IllegalStateException("이미 존재하는 아이디입니다.");
         }
@@ -39,7 +36,7 @@ public class UserService {
                 .build();
 
 
-        return userRepository.save(newUser);
+        userRepository.save(newUser);
     }
 
 

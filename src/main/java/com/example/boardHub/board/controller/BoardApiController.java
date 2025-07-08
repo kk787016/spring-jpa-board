@@ -3,8 +3,14 @@ package com.example.boardHub.board.controller;
 import com.example.boardHub.board.dto.request.BoardRequestDto;
 import com.example.boardHub.board.dto.response.BoardBestResponseDto;
 import com.example.boardHub.board.dto.response.BoardResponseDto;
+import com.example.boardHub.board.dto.response.CommentResponseDto;
+import com.example.boardHub.board.dto.response.RecommendationResponseDto;
 import com.example.boardHub.board.model.Board;
+import com.example.boardHub.board.model.Comment;
+import com.example.boardHub.board.repository.CommentRepository;
 import com.example.boardHub.board.service.BoardService;
+import com.example.boardHub.board.service.CommentService;
+import com.example.boardHub.board.service.RecommendationService;
 import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.model.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +26,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BoardApiController {
     private final BoardService boardService;
+    private final RecommendationService recommendationService;
+    private final CommentRepository commentRepository;
+    private final CommentService commentService;
 
     @PostMapping("/new")
     public ResponseEntity<?> createBoard(@RequestBody BoardRequestDto boardRequestDto,
@@ -34,12 +43,19 @@ public class BoardApiController {
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<BoardResponseDto> detail(@PathVariable Long boardId) {
+    public ResponseEntity<BoardResponseDto> detail(@PathVariable Long boardId,
+                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails != null ? userDetails.getUser().getId() : null;
 
         Board board = boardService.getBoardDetail(boardId);
         long totalViews = boardService.getTotalViews(board);
 
-        BoardResponseDto responseBoard = new BoardResponseDto(board,totalViews);
+        List<Comment> comments = commentRepository.findAllByBoardIdWithUser(boardId);
+
+        RecommendationResponseDto recommendResult = recommendationService.getRecommendationStatus(boardId, userId);
+        List<CommentResponseDto> commentResponses = commentService.buildTwoLevelCommentTree(comments);
+
+        BoardResponseDto responseBoard = new BoardResponseDto(board,totalViews,recommendResult, commentResponses);
 
         return ResponseEntity.ok(responseBoard);
     }
@@ -49,7 +65,7 @@ public class BoardApiController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/delete/{deleteBoardId}")
+    @DeleteMapping("/{deleteBoardId}")
     public ResponseEntity<?> deleteBoard(@PathVariable Long deleteBoardId,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
 

@@ -18,7 +18,7 @@ public class LikeCountScheduler {
     private final BoardRepository boardRepository;
 
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 1000000)
     @Transactional
     public void syncBoardCount(){
 
