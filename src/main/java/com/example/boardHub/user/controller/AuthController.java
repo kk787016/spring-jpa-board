@@ -3,6 +3,9 @@ package com.example.boardHub.user.controller;
 import com.example.boardHub.global.config.jwt.JwtTokenProvider;
 //import com.example.boardHub.global.context.UserContext;
 import com.example.boardHub.user.dto.LoginRequestDto;
+import com.example.boardHub.user.model.User;
+import com.example.boardHub.user.model.UserDetailsImpl;
+import com.example.boardHub.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +30,7 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
 
 
     @PostMapping("/login")
@@ -39,8 +44,12 @@ public class AuthController {
             );
 
             String userId = authentication.getName();
-            String accessToken = jwtTokenProvider.createAccessToken(userId);
-            String refreshToken = jwtTokenProvider.createRefreshToken(userId);
+
+            User user = userRepository.findByUserId(userId)
+                    .orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾을 수 없습니다."));
+
+            String accessToken = jwtTokenProvider.createAccessToken(user);
+            String refreshToken = jwtTokenProvider.createRefreshToken(user);
 
 
             ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)

@@ -1,5 +1,6 @@
 package com.example.boardHub.global.config.jwt;
 
+import com.example.boardHub.user.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -39,24 +40,26 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createAccessToken(String userId) {
+    public String createAccessToken(User user) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMs);
 
         return Jwts.builder()
-                .setSubject(userId)
+                .setSubject(user.getUserId())
+                .claim("id", user.getId())
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String createRefreshToken(String userId) {
+    public String createRefreshToken(User user) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + refreshValidityInMs);
 
         return Jwts.builder()
-                .setSubject(userId)
+                .setSubject(user.getUserId())
+                .claim("id", user.getId())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)

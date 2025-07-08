@@ -36,20 +36,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
         if (token == null){
             log.info("JWT token is null");
+        } else {
+            log.info("JWT token is valid");
         }
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
             String userId = jwtTokenProvider.getUsername(token);
 
-
-            //UserContext.setUserId(userId);
-//
-//            UserDetails userDetails = User.builder()
-//                    .username(userId)
-//                    .password("")
-//                    .authorities(new ArrayList<>())
-//                    .build();
-//
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(userId);
 
             Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
