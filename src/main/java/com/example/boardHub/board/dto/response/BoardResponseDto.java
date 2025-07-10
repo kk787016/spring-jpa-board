@@ -4,6 +4,7 @@ import com.example.boardHub.board.model.Board;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,7 @@ public class BoardResponseDto {
         this.dislikeCount = r.getDislikeCount();
         this.userLiked = r.isUserLiked();
         this.userDisLiked = r.isUserDisLiked();
-        this.comments = commentResponses;
+        this.comments = commentResponses != null ? commentResponses : new ArrayList<>();
+
     }
 }

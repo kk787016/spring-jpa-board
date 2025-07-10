@@ -136,13 +136,11 @@ public class CommentService {
             CommentResponseDto dto = dtoMap.get(comment.getId());
 
             if (comment.getParent() == null) {
-                // 댓글
                 rootComments.add(dto);
             } else {
-                // 대댓글
                 CommentResponseDto parentDto = dtoMap.get(comment.getParent().getId());
                 if (parentDto != null) {
-                    parentDto.addChild(dto); // 부모에 대댓글 추가
+                    parentDto.addChild(dto);
                 }
             }
         }

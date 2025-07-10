@@ -61,7 +61,7 @@ public class BoardService {
     @Transactional
     public Board getBoardDetail(Long boardId) {
 
-        return boardRepository.findByIdAndDeletedFalseWithUser(boardId).orElseThrow(() ->
+        return boardRepository.findByIdAndDeletedFalseWithComments(boardId).orElseThrow(() ->
                 new BoardNotFoundException("게시글을 찾을 수 없습니다: " + boardId)
         );
 

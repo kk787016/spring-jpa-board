@@ -46,11 +46,10 @@ public class BoardApiController {
     public ResponseEntity<BoardResponseDto> detail(@PathVariable Long boardId,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long userId = userDetails != null ? userDetails.getUser().getId() : null;
-
         Board board = boardService.getBoardDetail(boardId);
-        long totalViews = boardService.getTotalViews(board);
+        List<Comment> comments = board.getComments();
 
-        List<Comment> comments = commentRepository.findAllByBoardIdWithUser(boardId);
+        long totalViews = boardService.getTotalViews(board);
 
         RecommendationResponseDto recommendResult = recommendationService.getRecommendationStatus(boardId, userId);
         List<CommentResponseDto> commentResponses = commentService.buildTwoLevelCommentTree(comments);

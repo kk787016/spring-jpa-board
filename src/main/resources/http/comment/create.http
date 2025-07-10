@@ -22,10 +22,10 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTM2OTg4NSwiZXhwIjoxNzUxMzcwNzg1fQ.eD1oAVdw8HaYuzTmMbQe0uW1a1tZSaY45fm3_KkLIuk
 
 ### 대댓글 생성
-POST http://localhost:8080/api/boards/16/comments/9/new
+POST http://localhost:8080/api/boards/4/comments/2/new
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTM2OTgyNSwiZXhwIjoxNzUxMzcwNzI1fQ.ZL7TASSv-cdO39TYitFw2nlEVHPP1bpNKbcSumelxi0
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlkIjoxLCJpYXQiOjE3NTIwNDEzNTYsImV4cCI6MTc1MjA0MjI1Nn0.pWSXGtIHjDb2Dobo4YzAGG3yNgq595EnszUnciAAwYA
 
 {
-"content": "a대댓글입니ㅁㄴㅇㄹ다."
+"content": "aaaaaㅇㄹ다."
 }
