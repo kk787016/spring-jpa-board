@@ -13,7 +13,9 @@ import com.example.boardHub.board.service.CommentService;
 import com.example.boardHub.board.service.RecommendationService;
 import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.model.UserDetailsImpl;
+import com.example.boardHub.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/board")
 @RequiredArgsConstructor
@@ -29,15 +32,15 @@ public class BoardApiController {
     private final RecommendationService recommendationService;
     private final CommentRepository commentRepository;
     private final CommentService commentService;
+    private final UserService userService;
 
     @PostMapping("/new")
     public ResponseEntity<?> createBoard(@RequestBody BoardRequestDto boardRequestDto,
-                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                         @AuthenticationPrincipal String userId) {
 
-        User user = userDetails.getUser();
+        User user = userService.getUserById(userId);
 
         boardService.registerBoard(boardRequestDto, user);
-
         return ResponseEntity.ok().body(Map.of("message", "게시판 성공"));
 
     }

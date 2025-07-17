@@ -1,5 +1,8 @@
 package com.example.boardHub.user.service;
 
+import com.example.boardHub.board.model.Board;
+import com.example.boardHub.global.exception.BoardNotFoundException;
+import com.example.boardHub.global.exception.UserNotFoundException;
 import com.example.boardHub.user.dto.UserRequestDto;
 import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.repository.UserRepository;
@@ -39,5 +42,10 @@ public class UserService {
         userRepository.save(newUser);
     }
 
+
+    public User getUserById(String userId) {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을 수 없습니다: " + userId));
+    }
 
 }
