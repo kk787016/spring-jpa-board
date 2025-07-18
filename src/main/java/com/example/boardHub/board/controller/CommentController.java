@@ -5,6 +5,7 @@ import com.example.boardHub.board.dto.request.CommentRequestDto;
 import com.example.boardHub.board.service.CommentService;
 import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.model.UserDetailsImpl;
+import com.example.boardHub.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class CommentController {
 
     private final CommentService commentService;
+    private final UserService userService;
 
 
     @PostMapping

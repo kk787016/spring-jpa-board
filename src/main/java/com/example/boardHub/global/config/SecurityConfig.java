@@ -39,9 +39,10 @@ public class SecurityConfig {
                                 //.anyRequest().permitAll() // 모든 요청을 인증 없이 허용
 //                        .requestMatchers("/","/user/**","/board/**","/boards/**","/h2-console/**").permitAll()
 //                        .anyRequest().authenticated()
-
-                                .requestMatchers("/board/update/**").authenticated()
-                                .requestMatchers("/board/delete/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "api/board").permitAll()
+                                .requestMatchers(HttpMethod.POST,"api/board/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.DELETE,"api/board/**").authenticated()
+                                .requestMatchers(HttpMethod.PATCH,"api/board/update/**").authenticated()
                                 //.requestMatchers("/board/**/new").authenticated()
                                 .anyRequest().permitAll()
 

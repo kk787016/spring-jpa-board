@@ -4,10 +4,11 @@ import com.example.boardHub.board.model.Board;
 import com.example.boardHub.board.model.Comment;
 import com.example.boardHub.global.config.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,12 +36,18 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRoleEnum role;
+
+
     @Builder
     public User(String userId, String password, String username, String nickname){
         this.userId = userId;
         this.password = password;
         this.username = username;
         this.nickname = nickname;
+        this.role = UserRoleEnum.USER;
 
     }
 }

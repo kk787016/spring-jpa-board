@@ -17,9 +17,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTM2MDE1N
 }
 
 ### 댓글 삭제
-DELETE http://localhost:8080/api/boards/16/comments/14
+DELETE http://localhost:8080/api/boards/6/comments/7
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlhdCI6MTc1MTM2OTg4NSwiZXhwIjoxNzUxMzcwNzg1fQ.eD1oAVdw8HaYuzTmMbQe0uW1a1tZSaY45fm3_KkLIuk
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZyIsImlkIjoxLCJpYXQiOjE3NTI4MjcwMjYsImV4cCI6MTc1MjgyNzkyNn0.JO6dfyVtWr4Gu0cJTBHgtwevTOQcXSr3sqDYgpgRsuc
 
 ### 대댓글 생성
 POST http://localhost:8080/api/boards/4/comments/2/new

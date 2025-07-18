@@ -47,5 +47,12 @@ public class UserService {
         return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을 수 없습니다: " + userId));
     }
+    public Long getIdByUserId(String userId) {
+        if(userId == null || userId.equals("anonymousUser")) {
+            return null;
+        }
+        return userRepository.findIdByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("해당 유저를 찾을 수 없습니다: " + userId));
+    }
 
 }

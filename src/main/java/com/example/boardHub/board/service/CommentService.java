@@ -24,7 +24,6 @@ import java.util.Map;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final BoardRepository boardRepository;
     private final BoardService boardService;
 
     @Transactional

@@ -6,6 +6,7 @@ import com.example.boardHub.board.model.RecommendationType;
 import com.example.boardHub.board.service.RecommendationService;
 import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.model.UserDetailsImpl;
+import com.example.boardHub.user.service.UserService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class RecommendationController {
 
     private final RecommendationService recommendationService;
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<?> recommend(@PathVariable Long boardId,

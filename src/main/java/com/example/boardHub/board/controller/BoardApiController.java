@@ -30,15 +30,14 @@ import java.util.Map;
 public class BoardApiController {
     private final BoardService boardService;
     private final RecommendationService recommendationService;
-    private final CommentRepository commentRepository;
     private final CommentService commentService;
     private final UserService userService;
 
     @PostMapping("/new")
     public ResponseEntity<?> createBoard(@RequestBody BoardRequestDto boardRequestDto,
-                                         @AuthenticationPrincipal String userId) {
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        User user = userService.getUserById(userId);
+        User user = userDetails.getUser();
 
         boardService.registerBoard(boardRequestDto, user);
         return ResponseEntity.ok().body(Map.of("message", "게시판 성공"));
@@ -48,7 +47,10 @@ public class BoardApiController {
     @GetMapping("/{boardId}")
     public ResponseEntity<BoardResponseDto> detail(@PathVariable Long boardId,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
         Long userId = userDetails != null ? userDetails.getUser().getId() : null;
+
+
         Board board = boardService.getBoardDetail(boardId);
         List<Comment> comments = board.getComments();
 
