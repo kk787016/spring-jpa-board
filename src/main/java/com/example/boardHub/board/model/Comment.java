@@ -4,13 +4,7 @@ import com.example.boardHub.global.config.BaseEntity;
 import com.example.boardHub.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.domain.Auditable;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +66,10 @@ public class Comment extends BaseEntity {
     }
 
     public boolean isLastChild() {
-        return this.parent.isDeleted() && this.getChildren().size() == 1;
+        if (this.parent == null || !this.parent.isDeleted()) {
+            return false;
+        }
+        return this.getChildren().size() == 1;
     }
 
 }
