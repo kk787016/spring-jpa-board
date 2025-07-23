@@ -31,7 +31,6 @@ public class BoardApiController {
     private final BoardService boardService;
     private final RecommendationService recommendationService;
     private final CommentService commentService;
-    private final UserService userService;
 
     @PostMapping("/new")
     public ResponseEntity<?> createBoard(@RequestBody BoardRequestDto boardRequestDto,

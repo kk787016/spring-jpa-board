@@ -92,5 +92,8 @@ public class Board extends BaseEntity {
         this.disLikeCount = disLikeCount;
 
     }
+    public boolean emptyChild() {
+        return this.getChildren().isEmpty();
 
+    }
 }

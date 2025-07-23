@@ -13,8 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUserId(String userId);
 
-    @Query("SELECT u.id FROM User u WHERE u.userId = :userId")
-    Optional<Long> findIdByUserId(String userId);
+//    @Query("SELECT u.id FROM User u WHERE u.userId = :userId")
+//    Optional<Long> findIdByUserId(String userId);
     boolean existsByUserId(String userId);
     boolean existsByNickname(String nickname);
 }

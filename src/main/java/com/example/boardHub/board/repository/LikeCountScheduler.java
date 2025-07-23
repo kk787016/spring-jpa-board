@@ -11,7 +11,6 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-
 public class LikeCountScheduler {
 
     private final StringRedisTemplate redisTemplate;

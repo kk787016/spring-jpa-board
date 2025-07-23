@@ -55,33 +55,13 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId, User user) {
-
         Comment comment = findCommentAndCheckOwnership(commentId, user);
-/*        Comment parent = comment.getParent();*/
 
-//        리팩토링 가능
-        if (!comment.isLastChild()){
-            comment.softDelete();
+        if (comment.emptyChild()){
+            commentRepository.delete(comment);
             return;
         }
-        commentRepository.delete(comment);
-
-
-        //        if (parent == null) {
-//            if (comment.getChildren().isEmpty()) {
-//                commentRepository.delete(comment);
-//            } else {
-//                comment.softDelete();
-//            }
-//        } else { // 내가 마지막 자식이라면?
-//            boolean isLastChild = parent.isDeleted() && parent.getChildren().size() == 1;
-//
-//            commentRepository.delete(comment);
-//
-//            if (isLastChild) {
-//                commentRepository.delete(parent);
-//            }
-//        }
+        comment.softDelete();
     }
 
     @Transactional

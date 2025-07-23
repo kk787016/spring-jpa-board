@@ -7,11 +7,8 @@ import com.example.boardHub.board.model.Board;
 import com.example.boardHub.board.repository.BoardRepository;
 import com.example.boardHub.global.exception.BoardNotFoundException;
 import com.example.boardHub.user.model.User;
-
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,23 +67,12 @@ public class BoardService {
     @Transactional
     public void deleteBoard(Long boardId, User user) {
         Board board = findBoardAndCheckOwnership(boardId, user);
-        Board parent = board.getParent();
 
-        if (parent == null) {
-            if (board.getChildren().isEmpty()) {
-                boardRepository.delete(board);
-            } else {
-                board.softDelete();
-            }
-        } else {
-            boolean isLastChild = parent.isDeleted() && parent.getChildren().size() == 1;
-
+        if (board.emptyChild()){
             boardRepository.delete(board);
-            if (isLastChild) {
-                boardRepository.delete(parent);
-            }
+            return;
         }
-
+        board.softDelete();
     }
 
     @Transactional

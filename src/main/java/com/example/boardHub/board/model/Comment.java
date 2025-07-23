@@ -65,11 +65,8 @@ public class Comment extends BaseEntity {
         childComment.setParent(this);
     }
 
-    public boolean isLastChild() {
-        if (this.parent == null || !this.parent.isDeleted()) {
-            return false;
-        }
-        return this.getChildren().size() == 1;
+    public boolean emptyChild() {
+        return this.getChildren().isEmpty();
     }
 
 }
